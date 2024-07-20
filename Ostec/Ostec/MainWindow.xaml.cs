@@ -8,6 +8,7 @@ using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Windows.Threading;
 using System.Timers;
+using System.Windows.Input;
 
 namespace Ostec
 {
@@ -190,7 +191,40 @@ namespace Ostec
             }
         }
 
-        // Подтверждение для подтверждения завершения работы программы.
+        // Возможность перетаскивания программы.
+        private Point startPoint;
+        private void MainBar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            startPoint = e.GetPosition(this);
+        }
+        private void MainBar_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point newPoint = e.GetPosition(this);
+                Vector diff = startPoint - newPoint;
+
+                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    DragMove();
+                }
+            }
+        }
+
+        // Скрытие программы в панель задач.
+        private void Hide_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        // Завершение работы программы.
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        // Подтверждение завершения работы программы.
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             base.OnClosing(e);
